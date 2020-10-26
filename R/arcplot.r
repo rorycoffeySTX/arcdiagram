@@ -566,6 +566,10 @@ arcplot <- function(
                         if (perc.labels) {
                                 choose <- integer(100 / perc.labels)
                                 sel <- seq_along(labels) %% choose == 0
+				print(paste0("Sel: ", length(sel)))
+				print(paste0("Labels: ", length(labels)))
+				print(paste0("Centers: ", length(centers)))
+				print(paste0("Labels color", length(col.labels)))
                                 mtext(labels[sel],
                                         side = side,
                                         line = line,

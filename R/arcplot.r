@@ -17,77 +17,77 @@
 #' @export
 #' @keywords internal
 graph_info <-
-        function(edgelist, vertices, sorted = FALSE, decreasing = FALSE,
-                 ordering = NULL, labels = NULL) {
-                # ======================================================
-                # Checking arguments
-                # ======================================================
-                # edgelist as a two-column matrix
-                if (!is.matrix(edgelist) || ncol(edgelist) != 2) {
-                        stop("\nSorry, 'edgelist' must be a two column matrix")
-                }
-
-                num_edges <- nrow(edgelist)
-                # get nodes (this could be numeric or character)
-                if (hasArg(vertices)) {
-                        # to deal with singleton nodes
-                        nodes <- vertices
-                } else {
-                        nodes <- unique(as.vector(t(edgelist)))
-                }
-                num_nodes <- length(nodes)
-                # check labels (i.e. node names)
-                if (!is.null(labels)) {
-                        if (length(labels) != num_nodes) {
-                                stop("\nLength of 'labels' differs from number of nodes")
-                        }
-                } else {
-                        labels <- nodes
-                }
-
-                # auxiliar order (this may change if sorted or ordering required)
-                aux_ord <- 1:num_nodes
-
-                # If sorted is required, ennumerate nodes
-                if (sorted) {
-                        ordered_nodes <- order(nodes, decreasing = decreasing)
-                        nodes <- nodes[ordered_nodes]
-                        labels <- labels[ordered_nodes]
-                        # auxiliar order
-                        aux_ord <- ordered_nodes
-                }
-
-                # If ordering is provided, re-ennumerate nodes
-                if (!is.null(ordering)) {
-                        if (length(ordering) != num_nodes) {
-                                stop("\nLength of 'ordering' differs from number of nodes")
-                        }
-
-                        if (is.character(ordering)) {
-                                # make sure labels contains elements in ordering
-                                unmatched_ordering <- !(ordering %in% labels)
-                                if (any(unmatched_ordering)) {
-                                        undetected <- ordering[unmatched_ordering]
-                                        stop(sprintf("\nUnrecognized values in ordering: '%s'", undetected))
-                                }
-                                ordering <- match(ordering, labels)
-                        }
-
-                        nodes <- nodes[ordering]
-                        labels <- labels[ordering]
-                        # auxiliar order
-                        aux_ord <- ordering
-                }
-
-                ## output
-                list(
-                        nodes = nodes,
-                        labels = labels,
-                        num_nodes = num_nodes,
-                        num_edges = num_edges,
-                        aux_ord = aux_ord
-                )
+    function(edgelist, vertices, sorted = FALSE, decreasing = FALSE,
+             ordering = NULL, labels = NULL) {
+        # ======================================================
+        # Checking arguments
+        # ======================================================
+        # edgelist as a two-column matrix
+        if (!is.matrix(edgelist) || ncol(edgelist) != 2) {
+            stop("\nSorry, 'edgelist' must be a two column matrix")
         }
+
+        num_edges <- nrow(edgelist)
+        # get nodes (this could be numeric or character)
+        if (hasArg(vertices)) {
+            # to deal with singleton nodes
+            nodes <- vertices
+        } else {
+            nodes <- unique(as.vector(t(edgelist)))
+        }
+        num_nodes <- length(nodes)
+        # check labels (i.e. node names)
+        if (!is.null(labels)) {
+            if (length(labels) != num_nodes) {
+                stop("\nLength of 'labels' differs from number of nodes")
+            }
+        } else {
+            labels <- nodes
+        }
+
+        # auxiliar order (this may change if sorted or ordering required)
+        aux_ord <- 1:num_nodes
+
+        # If sorted is required, ennumerate nodes
+        if (sorted) {
+            ordered_nodes <- order(nodes, decreasing = decreasing)
+            nodes <- nodes[ordered_nodes]
+            labels <- labels[ordered_nodes]
+            # auxiliar order
+            aux_ord <- ordered_nodes
+        }
+
+        # If ordering is provided, re-ennumerate nodes
+        if (!is.null(ordering)) {
+            if (length(ordering) != num_nodes) {
+                stop("\nLength of 'ordering' differs from number of nodes")
+            }
+
+            if (is.character(ordering)) {
+                # make sure labels contains elements in ordering
+                unmatched_ordering <- !(ordering %in% labels)
+                if (any(unmatched_ordering)) {
+                    undetected <- ordering[unmatched_ordering]
+                    stop(sprintf("\nUnrecognized values in ordering: '%s'", undetected))
+                }
+                ordering <- match(ordering, labels)
+            }
+
+            nodes <- nodes[ordering]
+            labels <- labels[ordering]
+            # auxiliar order
+            aux_ord <- ordering
+        }
+
+        ## output
+        list(
+            nodes = nodes,
+            labels = labels,
+            num_nodes = num_nodes,
+            num_edges = num_edges,
+            aux_ord = aux_ord
+        )
+    }
 
 
 #' @title X or Y coordinates of node locations
@@ -100,19 +100,19 @@ graph_info <-
 #' @param labels optional string vector with labels for the nodes
 #' @export
 xynodes <- function(num_nodes, aux_ord, labels) {
-        # ======================================================
-        # Coordinates of nodes (i.e. vertices)
-        # ======================================================
-        # node labels at equal distances from each other
-        nf <- rep(1 / num_nodes, num_nodes)
-        # center coordinates of node labels
-        fin <- cumsum(nf)
-        ini <- c(0, cumsum(nf)[-num_nodes])
-        centers <- (ini + fin) / 2
-        names(centers) <- labels[aux_ord]
+    # ======================================================
+    # Coordinates of nodes (i.e. vertices)
+    # ======================================================
+    # node labels at equal distances from each other
+    nf <- rep(1 / num_nodes, num_nodes)
+    # center coordinates of node labels
+    fin <- cumsum(nf)
+    ini <- c(0, cumsum(nf)[-num_nodes])
+    centers <- (ini + fin) / 2
+    names(centers) <- labels[aux_ord]
 
-        # output
-        centers
+    # output
+    centers
 }
 
 
@@ -129,27 +129,27 @@ xynodes <- function(num_nodes, aux_ord, labels) {
 #' @export
 #' @keywords internal
 arc_radius_locs <- function(edgelist, nodes, centers) {
-        # ======================================================
-        # Coordinates of arcs (i.e. edges)
-        # ======================================================
-        # handy matrix with numeric indices '1:FROM' , '2:TO'
-        edges_from_to <- matrix(0, nrow(edgelist), 2)
-        for (i in 1L:nrow(edgelist))
-        {
-                edges_from_to[i, 1] <- centers[which(nodes == edgelist[i, 1])]
-                edges_from_to[i, 2] <- centers[which(nodes == edgelist[i, 2])]
-        }
+    # ======================================================
+    # Coordinates of arcs (i.e. edges)
+    # ======================================================
+    # handy matrix with numeric indices '1:FROM' , '2:TO'
+    edges_from_to <- matrix(0, nrow(edgelist), 2)
+    for (i in 1L:nrow(edgelist))
+    {
+        edges_from_to[i, 1] <- centers[which(nodes == edgelist[i, 1])]
+        edges_from_to[i, 2] <- centers[which(nodes == edgelist[i, 2])]
+    }
 
-        # maximum radius of arcs
-        radios <- abs(edges_from_to[, 1] - edges_from_to[, 2]) / 2
-        max_radios <- which(radios == max(radios))
-        max_rad <- unique(radios[max_radios] / 2)
+    # maximum radius of arcs
+    radios <- abs(edges_from_to[, 1] - edges_from_to[, 2]) / 2
+    max_radios <- which(radios == max(radios))
+    max_rad <- unique(radios[max_radios] / 2)
 
-        # arc locations
-        locs <- rowSums(edges_from_to) / 2
+    # arc locations
+    locs <- rowSums(edges_from_to) / 2
 
-        # output
-        list(locs = locs, radios = radios)
+    # output
+    list(locs = locs, radios = radios)
 }
 
 
@@ -173,44 +173,44 @@ arc_radius_locs <- function(edgelist, nodes, centers) {
 #' @export
 #' @keywords internal
 above_below <- function(edgelist, above) {
-        # ======================================================
-        # Coordinates of arcs (i.e. edges) below the axis
-        # ======================================================
-        # check above
-        if (is.null(above)) {
-                above <- rep(TRUE, nrow(edgelist))
-        } else {
-                if (length(above) > nrow(edgelist)) {
-                        stop("\nlength of 'above' exceeds number of rows in 'edgelist'")
-                }
-                # check numeric above and convert to logical
-                if (is.numeric(above)) {
-                        above_positive <- any(above > 0)
-                        above_negative <- any(above < 0)
-                        if (above_positive & above_negative) {
-                                stop("\n'above' cannot contain both negative and positive indices")
-                        }
-                        # convert to logical
-                        if (all(above > 0)) {
-                                above <- 1:nrow(edgelist) %in% above
-                        }
-                        if (all(above < 0)) {
-                                above <- !(-(1:nrow(edgelist)) %in% above)
-                        }
-                        if (all(above == 0)) {
-                                above <- rep(FALSE, nrow(edgelist))
-                        }
-                }
-                # check logical above
-                if (is.logical(above)) {
-                        if (length(above) != nrow(edgelist)) {
-                                stop("\nlength of 'above' must equal number of rows in 'edgelist'")
-                        }
-                }
+    # ======================================================
+    # Coordinates of arcs (i.e. edges) below the axis
+    # ======================================================
+    # check above
+    if (is.null(above)) {
+        above <- rep(TRUE, nrow(edgelist))
+    } else {
+        if (length(above) > nrow(edgelist)) {
+            stop("\nlength of 'above' exceeds number of rows in 'edgelist'")
         }
+        # check numeric above and convert to logical
+        if (is.numeric(above)) {
+            above_positive <- any(above > 0)
+            above_negative <- any(above < 0)
+            if (above_positive & above_negative) {
+                stop("\n'above' cannot contain both negative and positive indices")
+            }
+            # convert to logical
+            if (all(above > 0)) {
+                above <- 1:nrow(edgelist) %in% above
+            }
+            if (all(above < 0)) {
+                above <- !(-(1:nrow(edgelist)) %in% above)
+            }
+            if (all(above == 0)) {
+                above <- rep(FALSE, nrow(edgelist))
+            }
+        }
+        # check logical above
+        if (is.logical(above)) {
+            if (length(above) != nrow(edgelist)) {
+                stop("\nlength of 'above' must equal number of rows in 'edgelist'")
+            }
+        }
+    }
 
-        # output
-        above
+    # output
+    above
 }
 
 
@@ -223,27 +223,27 @@ above_below <- function(edgelist, above) {
 #' @export
 #' @keywords internal
 min_max_margin <- function(radios, above) {
-        # determine maximum radius
-        max_radios <- which(radios == max(radios))
+    # determine maximum radius
+    max_radios <- which(radios == max(radios))
 
-        # minimum and maximum margin limits
-        lim_min <- 0
-        lim_max <- 0
+    # minimum and maximum margin limits
+    lim_min <- 0
+    lim_max <- 0
 
-        above_radios <- radios[above]
-        if (length(above_radios > 0)) {
-                max_above_radios <- which(above_radios == max(above_radios))[1]
-                lim_max <- above_radios[max_above_radios]
-        }
+    above_radios <- radios[above]
+    if (length(above_radios > 0)) {
+        max_above_radios <- which(above_radios == max(above_radios))[1]
+        lim_max <- above_radios[max_above_radios]
+    }
 
-        below_radios <- radios[!above]
-        if (length(below_radios > 0)) {
-                max_below_radios <- which(below_radios == max(below_radios))[1]
-                lim_min <- -1 * below_radios[max_below_radios]
-        }
+    below_radios <- radios[!above]
+    if (length(below_radios > 0)) {
+        max_below_radios <- which(below_radios == max(below_radios))[1]
+        lim_min <- -1 * below_radios[max_below_radios]
+    }
 
-        # margin limits
-        list(min = lim_min, max = lim_max)
+    # margin limits
+    list(min = lim_min, max = lim_max)
 }
 
 
@@ -327,12 +327,12 @@ min_max_margin <- function(radios, above) {
 #' \dontrun{
 #' # create an edgelist
 #' un_graphe <- rbind(
-#'         c("fromage", "pain"),
-#'         c("pain", "vin"),
-#'         c("vin", "biere"),
-#'         c("cidre", "biere"),
-#'         c("foie", "fromage"),
-#'         c("pain", "foie")
+#'     c("fromage", "pain"),
+#'     c("pain", "vin"),
+#'     c("vin", "biere"),
+#'     c("cidre", "biere"),
+#'     c("foie", "fromage"),
+#'     c("pain", "foie")
 #' )
 #'
 #' # deafult arcplot
@@ -385,214 +385,210 @@ arcplot <- function(
                     show.labels = TRUE, col.labels = "gray55",
                     cex.labels = 0.9, las = 2, font = 1, line = 0,
                     outer = FALSE, adj = NA, padj = NA, axes = FALSE, xlim = NULL, ylim = NULL, ...) {
-        # Get graph information
-        if (hasArg(vertices)) {
-                nodes_edges <- graph_info(edgelist,
-                        vertices = vertices, sorted = sorted,
-                        decreasing = decreasing,
-                        ordering = ordering, labels = labels
-                )
-        } else {
-                nodes_edges <- graph_info(edgelist,
-                        sorted = sorted, decreasing = decreasing,
-                        ordering = ordering, labels = labels
-                )
-        }
-        nodes <- nodes_edges$nodes
-        num_nodes <- nodes_edges$num_nodes
-        num_edges <- nodes_edges$num_edges
-        aux_ord <- nodes_edges$aux_ord
-        labels <- nodes_edges$labels
-
-        # x-y node coordinates
-        centers <- xynodes(num_nodes, aux_ord, labels)
-
-        # determine above or below display of arcs
-        above <- above_below(edgelist, above)
-
-        # arc radius and locations
-        radios_locs <- arc_radius_locs(edgelist, nodes, centers)
-        radios <- radios_locs$radios
-        locs <- radios_locs$locs
-
-        # ======================================================
-        # Graphical parameters for Arcs
-        # ======================================================
-        # color of arcs
-        if (length(col.arcs) != num_edges) {
-                col.arcs <- rep(col.arcs, length = num_edges)
-        }
-        # line width of arcs
-        if (length(lwd.arcs) != num_edges) {
-                lwd.arcs <- rep(lwd.arcs, length = num_edges)
-        }
-        # line type of arcs
-        if (length(lty.arcs) != num_edges) {
-                lty.arcs <- rep(lty.arcs, length = num_edges)
-        }
-
-        # ======================================================
-        # Graphical parameters for Nodes
-        # ======================================================
-        # pch symbol of nodes
-        if (length(pch.nodes) != num_nodes) {
-                pch.nodes <- rep(pch.nodes, length = num_nodes)
-        }
-        pch.nodes <- pch.nodes[aux_ord]
-        # cex of nodes
-        if (length(cex.nodes) != num_nodes) {
-                cex.nodes <- rep(cex.nodes, length = num_nodes)
-        }
-        cex.nodes <- cex.nodes[aux_ord]
-        # color of nodes
-        if (length(col.nodes) != num_nodes) {
-                col.nodes <- rep(col.nodes, length = num_nodes)
-        }
-        col.nodes <- col.nodes[aux_ord]
-        # bg of nodes
-        if (length(bg.nodes) != num_nodes) {
-                bg.nodes <- rep(bg.nodes, length = num_nodes)
-        }
-        bg.nodes <- bg.nodes[aux_ord]
-        # line widths of nodes
-        if (length(lwd.nodes) != num_nodes) {
-                lwd.nodes <- rep(lwd.nodes, length = num_nodes)
-        }
-        lwd.nodes <- lwd.nodes[aux_ord]
-
-        # ======================================================
-        # Graphical parameters for Node Labels
-        # ======================================================
-        # color of labels
-        if (length(col.labels) != num_nodes) {
-                col.labels <- rep(col.labels, length = num_nodes)
-        }
-        col.labels <- col.labels[aux_ord]
-        # cex of labels
-        if (length(cex.labels) != num_nodes) {
-                cex.labels <- rep(cex.labels, length = num_nodes)
-        }
-        cex.labels <- cex.labels[aux_ord]
-
-        # ======================================================
-        # Plot arc diagram (horizontally or vertically)
-        # ======================================================
-        # auxiliar vector for plotting arcs
-        z <- seq(0, pi, length.out = 100)
-
-        if (horizontal) {
-                side <- 1
-        } else {
-                side <- 2
-        }
-
-        if (is.null(xlim)) {
-                if (horizontal) {
-                        xlim <- c(-0.015, 1.015)
-                        x_nodes <- centers
-                } else {
-                        xlims <- min_max_margin(radios, above)
-                        xlim <- c(xlims$min, xlims$max)
-                        x_nodes <- rep(0, num_nodes)
-                }
-        } else {
-                if (horizontal) {
-                        x_nodes <- centers
-                } else {
-                        x_nodes <- rep(0, num_nodes)
-                }
-        }
-
-        if (is.null(ylim)) {
-                if (horizontal) {
-                        ylims <- min_max_margin(radios, above)
-                        ylim <- c(ylims$min, ylims$max)
-                        y_nodes <- rep(0, num_nodes)
-                } else {
-                        ylim <- c(-0.015, 1.015)
-                        y_nodes <- centers
-                }
-        } else {
-                if (horizontal) {
-                        y_nodes <- rep(0, num_nodes)
-                } else {
-                        y_nodes <- centers
-                }
-        }
-
-        # open empty plot window
-        plot(0.5, 0.5,
-                xlim = xlim, ylim = ylim, type = "n",
-                xlab = "", ylab = "", axes = axes, ...
+    # Get graph information
+    if (hasArg(vertices)) {
+        nodes_edges <- graph_info(edgelist,
+            vertices = vertices, sorted = sorted,
+            decreasing = decreasing,
+            ordering = ordering, labels = labels
         )
-        # add each edge
-        for (i in 1L:num_edges)
-        {
-                # get radius length
-                radio <- radios[i]
-                if (horizontal) {
-                        # x-y coords of each arc
-                        x_arc <- locs[i] + radio * cos(z)
-                        if (above[i]) { # above axis
-                                y_arc <- radio * sin(z)
-                        } else { # below axis
-                                y_arc <- radio * sin(-z)
-                        }
-                } else {
-                        # x-y coords of each arc
-                        y_arc <- locs[i] + radio * cos(z)
-                        if (above[i]) { # above axis
-                                x_arc <- radio * sin(z)
-                        } else { # below axis
-                                x_arc <- radio * sin(-z)
-                        }
-                }
+    } else {
+        nodes_edges <- graph_info(edgelist,
+            sorted = sorted, decreasing = decreasing,
+            ordering = ordering, labels = labels
+        )
+    }
+    nodes <- nodes_edges$nodes
+    num_nodes <- nodes_edges$num_nodes
+    num_edges <- nodes_edges$num_edges
+    aux_ord <- nodes_edges$aux_ord
+    labels <- nodes_edges$labels
 
-                # plot arc connecting nodes
-                lines(x_arc, y_arc,
-                        col = col.arcs[i], lwd = lwd.arcs[i], lty = lty.arcs[i],
-                        lend = lend, ljoin = ljoin, lmitre = lmitre
-                )
-                # add node symbols with points
-                if (show.nodes) {
-                        points(
-                                x = x_nodes, y = y_nodes, pch = pch.nodes,
-                                col = col.nodes, bg = bg.nodes, cex = cex.nodes,
-                                lwd = lwd.nodes
-                        )
-                }
-                # add node labels with mtext
-                if (show.labels) {
-                        if (perc.labels) {
-                                choose <- integer(100 / perc.labels)
-                                sel <- seq_along(labels) %% choose == 0
-                                message(paste0("Sel: ", length(sel)))
-                                message(paste0("Labels: ", length(labels)))
-                                message(paste0("centers: ", length(centers)))
-                                message(paste0("Color labels: ", length(col.labels)))
-                                mtext(labels[sel],
-                                        side = side,
-                                        line = line,
-                                        at = centers[sel],
-                                        cex = cex.labels[sel],
-                                        outer = outer,
-                                        col = col.labels[sel],
-                                        las = las,
-                                        font = font,
-                                        adj = adj,
-                                        padj = padj, ...
-                                )
-                        } else {
-                                mtext(labels,
-                                        side = side, line = line, at = centers,
-                                        cex = cex.labels, outer = outer,
-                                        col = col.labels, las = las,
-                                        font = font, adj = adj,
-                                        padj = padj, ...
-                                )
-                        }
-                }
+    # x-y node coordinates
+    centers <- xynodes(num_nodes, aux_ord, labels)
+
+    # determine above or below display of arcs
+    above <- above_below(edgelist, above)
+
+    # arc radius and locations
+    radios_locs <- arc_radius_locs(edgelist, nodes, centers)
+    radios <- radios_locs$radios
+    locs <- radios_locs$locs
+
+    # ======================================================
+    # Graphical parameters for Arcs
+    # ======================================================
+    # color of arcs
+    if (length(col.arcs) != num_edges) {
+        col.arcs <- rep(col.arcs, length = num_edges)
+    }
+    # line width of arcs
+    if (length(lwd.arcs) != num_edges) {
+        lwd.arcs <- rep(lwd.arcs, length = num_edges)
+    }
+    # line type of arcs
+    if (length(lty.arcs) != num_edges) {
+        lty.arcs <- rep(lty.arcs, length = num_edges)
+    }
+
+    # ======================================================
+    # Graphical parameters for Nodes
+    # ======================================================
+    # pch symbol of nodes
+    if (length(pch.nodes) != num_nodes) {
+        pch.nodes <- rep(pch.nodes, length = num_nodes)
+    }
+    pch.nodes <- pch.nodes[aux_ord]
+    # cex of nodes
+    if (length(cex.nodes) != num_nodes) {
+        cex.nodes <- rep(cex.nodes, length = num_nodes)
+    }
+    cex.nodes <- cex.nodes[aux_ord]
+    # color of nodes
+    if (length(col.nodes) != num_nodes) {
+        col.nodes <- rep(col.nodes, length = num_nodes)
+    }
+    col.nodes <- col.nodes[aux_ord]
+    # bg of nodes
+    if (length(bg.nodes) != num_nodes) {
+        bg.nodes <- rep(bg.nodes, length = num_nodes)
+    }
+    bg.nodes <- bg.nodes[aux_ord]
+    # line widths of nodes
+    if (length(lwd.nodes) != num_nodes) {
+        lwd.nodes <- rep(lwd.nodes, length = num_nodes)
+    }
+    lwd.nodes <- lwd.nodes[aux_ord]
+
+    # ======================================================
+    # Graphical parameters for Node Labels
+    # ======================================================
+    # color of labels
+    if (length(col.labels) != num_nodes) {
+        col.labels <- rep(col.labels, length = num_nodes)
+    }
+    col.labels <- col.labels[aux_ord]
+    # cex of labels
+    if (length(cex.labels) != num_nodes) {
+        cex.labels <- rep(cex.labels, length = num_nodes)
+    }
+    cex.labels <- cex.labels[aux_ord]
+
+    # ======================================================
+    # Plot arc diagram (horizontally or vertically)
+    # ======================================================
+    # auxiliar vector for plotting arcs
+    z <- seq(0, pi, length.out = 100)
+
+    if (horizontal) {
+        side <- 1
+    } else {
+        side <- 2
+    }
+
+    if (is.null(xlim)) {
+        if (horizontal) {
+            xlim <- c(-0.015, 1.015)
+            x_nodes <- centers
+        } else {
+            xlims <- min_max_margin(radios, above)
+            xlim <- c(xlims$min, xlims$max)
+            x_nodes <- rep(0, num_nodes)
         }
+    } else {
+        if (horizontal) {
+            x_nodes <- centers
+        } else {
+            x_nodes <- rep(0, num_nodes)
+        }
+    }
+
+    if (is.null(ylim)) {
+        if (horizontal) {
+            ylims <- min_max_margin(radios, above)
+            ylim <- c(ylims$min, ylims$max)
+            y_nodes <- rep(0, num_nodes)
+        } else {
+            ylim <- c(-0.015, 1.015)
+            y_nodes <- centers
+        }
+    } else {
+        if (horizontal) {
+            y_nodes <- rep(0, num_nodes)
+        } else {
+            y_nodes <- centers
+        }
+    }
+
+    # open empty plot window
+    plot(0.5, 0.5,
+        xlim = xlim, ylim = ylim, type = "n",
+        xlab = "", ylab = "", axes = axes, ...
+    )
+    # add each edge
+    for (i in 1L:num_edges)
+    {
+        # get radius length
+        radio <- radios[i]
+        if (horizontal) {
+            # x-y coords of each arc
+            x_arc <- locs[i] + radio * cos(z)
+            if (above[i]) { # above axis
+                y_arc <- radio * sin(z)
+            } else { # below axis
+                y_arc <- radio * sin(-z)
+            }
+        } else {
+            # x-y coords of each arc
+            y_arc <- locs[i] + radio * cos(z)
+            if (above[i]) { # above axis
+                x_arc <- radio * sin(z)
+            } else { # below axis
+                x_arc <- radio * sin(-z)
+            }
+        }
+
+        # plot arc connecting nodes
+        lines(x_arc, y_arc,
+            col = col.arcs[i], lwd = lwd.arcs[i], lty = lty.arcs[i],
+            lend = lend, ljoin = ljoin, lmitre = lmitre
+        )
+        # add node symbols with points
+        if (show.nodes) {
+            points(
+                x = x_nodes, y = y_nodes, pch = pch.nodes,
+                col = col.nodes, bg = bg.nodes, cex = cex.nodes,
+                lwd = lwd.nodes
+            )
+        }
+        # add node labels with mtext
+        if (show.labels) {
+            if (perc.labels) {
+                choose <- round(100 / perc.labels)
+                sel <- seq_along(labels) %% choose == 0
+                mtext(labels[sel],
+                    side = side,
+                    line = line,
+                    at = centers[sel],
+                    cex = cex.labels[sel],
+                    outer = outer,
+                    col = col.labels[sel],
+                    las = las,
+                    font = font,
+                    adj = adj,
+                    padj = padj, ...
+                )
+            } else {
+                mtext(labels,
+                    side = side, line = line, at = centers,
+                    cex = cex.labels, outer = outer,
+                    col = col.labels, las = las,
+                    font = font, adj = adj,
+                    padj = padj, ...
+                )
+            }
+        }
+    }
 }
 
 
@@ -642,18 +638,18 @@ arcplot <- function(
 node_coords <- function(
                         edgelist, sorted = FALSE, decreasing = FALSE, ordering = NULL,
                         labels = NULL) {
-        # Get graph information
-        nodes_edges <- graph_info(edgelist,
-                sorted = sorted, decreasing = decreasing,
-                ordering = ordering, labels = labels
-        )
+    # Get graph information
+    nodes_edges <- graph_info(edgelist,
+        sorted = sorted, decreasing = decreasing,
+        ordering = ordering, labels = labels
+    )
 
-        nodes <- nodes_edges$nodes
-        num_nodes <- nodes_edges$num_nodes
-        num_edges <- nodes_edges$num_edges
-        aux_ord <- nodes_edges$aux_ord
-        labels <- nodes_edges$labels
+    nodes <- nodes_edges$nodes
+    num_nodes <- nodes_edges$num_nodes
+    num_edges <- nodes_edges$num_edges
+    aux_ord <- nodes_edges$aux_ord
+    labels <- nodes_edges$labels
 
-        # x-y node coordinates
-        centers <- xynodes(num_nodes, aux_ord, labels)
+    # x-y node coordinates
+    centers <- xynodes(num_nodes, aux_ord, labels)
 }

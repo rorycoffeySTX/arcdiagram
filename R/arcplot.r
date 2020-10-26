@@ -565,7 +565,7 @@ arcplot <- function(
                 if (show.labels) {
                         if (perc.labels) {
                                 choose <- integer(100 / perc.labels)
-                                sel <- seq_along %% choose == 0
+                                sel <- seq_along(labels) %% choose == 0
                                 mtext(labels[sel],
                                         side = side,
                                         line = line,

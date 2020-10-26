@@ -379,7 +379,7 @@ min_max_margin <- function(radios, above)
 #'
 arcplot <- function(
   edgelist, vertices, sorted = FALSE, decreasing = FALSE, ordering = NULL, 
-  labels = NULL, horizontal = TRUE, above = NULL, 
+  labels = NULL, perc.labels = NULL, horizontal = TRUE, above = NULL, 
   col.arcs = "#5998ff77", lwd.arcs = 1.8, lty.arcs = 1, 
   lend = 1, ljoin = 2, lmitre = 1, show.nodes = TRUE, pch.nodes = 19, 
   cex.nodes = 1, col.nodes = "gray80", bg.nodes = "gray80", lwd.nodes = 1,
@@ -551,6 +551,12 @@ arcplot <- function(
     }
     # add node labels with mtext
     if (show.labels) {
+	    if (perc.labels) {
+		    choose <- integer(100 / perc.labels)
+		    sel <- seq_along %% choose == 0
+	      mtext(labels[sel], side=side, line=line, at=centers[sel], cex=cex.labels[sel], outer=outer,
+		    col=col.labels[sel], las=las, font=font, adj=adj, padj=padj, ...)    
+	    }else{
       mtext(labels, side=side, line=line, at=centers, cex=cex.labels, outer=outer,
             col=col.labels, las=las, font=font, adj=adj, padj=padj, ...)    
     }

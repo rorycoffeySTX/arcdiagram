@@ -10,7 +10,7 @@ development version, use `install_github()` from R package `"devtools"`:
 
 ```ruby
 # install 'arcdiagram' (development version)
-devtools::install_github('gastonstat/arcdiagram')
+devtools::install_github('rorycoffeystx/arcdiagram')
 ```
 
 ## Some Examples

@@ -378,7 +378,7 @@ min_max_margin <- function(radios, above) {
 #'
 arcplot <- function(
                     edgelist, vertices, sorted = FALSE, decreasing = FALSE, ordering = NULL,
-                    labels = NULL, major.labels = NULL, horizontal = TRUE, above = NULL,
+                    labels = NULL, major.labels = NULL, mutations = NULL,horizontal = TRUE, above = NULL,
                     col.arcs = "#5998ff77", lwd.arcs = 1.8, lty.arcs = 1,
                     lend = 1, ljoin = 2, lmitre = 1, show.nodes = TRUE, pch.nodes = 19,
                     cex.nodes = 1, col.nodes = "gray80", bg.nodes = "gray80", lwd.nodes = 1,
@@ -560,6 +560,16 @@ arcplot <- function(
                                 col = col.nodes, bg = bg.nodes, cex = cex.nodes,
                                 lwd = lwd.nodes
                         )
+                }
+                # add mutations
+                if (mutations) {
+                        for (aa in mutations){
+                                aa_x_location <- x_nodes[labels == aa]
+                                aa_y_location <- y_nodes[labels == aa]
+                                aa_y1_location <- (aa_y_location - 10)
+                                segments(aa_x_location, aa_y_location, y1=aa_y1_location, x1=aa_x_location)
+                                points(aa_x_location, aa_y1_location, cex = 1)
+                        }
                 }
                 # add node labels with mtext
                 if (show.labels) {

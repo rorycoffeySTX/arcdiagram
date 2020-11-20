@@ -567,8 +567,8 @@ arcplot <- function(
                                 aa_x_location <- x_nodes[labels == mutations$AA[index]]
                                 aa_y_location <- y_nodes[labels == mutations$AA[index]]
                                 aa_y1_location <- (aa_y_location - mutations$Score[index])
-                                segments(aa_x_location, aa_y_location, y1=aa_y1_location, x1=aa_x_location, lwd = 0.5)
-                                points(aa_x_location, aa_y1_location, cex = 1)
+                                segments(aa_x_location, aa_y_location, y1=aa_y1_location, x1=aa_x_location, lwd = 0.1, col = "Gray")
+                                points(aa_x_location, aa_y1_location, cex = 0.1, col="Red")
                         }
                 }
                 # add node labels with mtext

@@ -562,18 +562,18 @@ arcplot <- function(
                         )
                 }
                 # add mutations
-                if (mutations) {
-                        for (aa in mutations){
-                                aa_x_location <- x_nodes[labels == aa]
-                                aa_y_location <- y_nodes[labels == aa]
-                                aa_y1_location <- (aa_y_location - 10)
-                                segments(aa_x_location, aa_y_location, y1=aa_y1_location, x1=aa_x_location)
+                if (!is.null(mutations)) {
+                        for (index in seq_along(mutations$AA)){
+                                aa_x_location <- x_nodes[labels == mutations$AA[index]]
+                                aa_y_location <- y_nodes[labels == mutations$AA[index]]
+                                aa_y1_location <- (aa_y_location - mutations$Score[index])
+                                segments(aa_x_location, aa_y_location, y1=aa_y1_location, x1=aa_x_location, lwd = 0.5)
                                 points(aa_x_location, aa_y1_location, cex = 1)
                         }
                 }
                 # add node labels with mtext
                 if (show.labels) {
-                        if (major.labels) {
+                        if (!is.null(major.labels)) {
                                 sel <- seq_along(labels) %% major.labels == 0
                                 mtext(labels[sel],
                                         side = side,
